@@ -182,4 +182,4 @@ if submit:
     if response_text:
         with open("invoice_response.txt", "w") as file:
             file.write(response_text)
-        st.markdown("[Download the response text](./invoice_response.txt)", unsafe_allow_html=True)
+        st.download_button(label="Download Response", data=response_text, file_name="invoice_response.txt", mime="text/plain")
