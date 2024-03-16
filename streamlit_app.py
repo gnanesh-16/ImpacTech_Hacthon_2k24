@@ -305,14 +305,6 @@ elif page == "Settings":
         st.success("API Key Updated Successfully")
 
 
-elif page == "Settings":
-    st.title("API Settings")
-    api_key = st.text_input("Enter your Google API Key:", type="password")
-    save_api_key = st.button("Save API Key")
-    if save_api_key and api_key:
-        os.environ["GOOGLE_API_KEY"] = api_key
-        st.success("API Key Updated Successfully")
-        
     
 ##############################################################################################################################################################################
 
