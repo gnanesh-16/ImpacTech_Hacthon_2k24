@@ -303,6 +303,23 @@ elif page == "Settings":
     if save_api_key and api_key:
         os.environ["GOOGLE_API_KEY"] = api_key
         st.success("API Key Updated Successfully")
+
+
+# elif page == "Settings":
+#     st.title("API Settings")
+#     api_key = st.text_input("Enter your Google API Key:", type="password")
+#     save_api_key = st.button("Save API Key")
+#     if save_api_key and api_key:
+#         os.environ["GOOGLE_API_KEY"] = api_key
+#         st.success("API Key Updated Successfully")
+        
+    # Added functionality to save API key to Excel sheet and download
+    if st.button('Export API Key to Excel'):
+        df_api_key = pd.DataFrame([{'API Key': api_key}])
+        excel_path = 'api_key.xlsx'
+        df_api_key.to_excel(excel_path, index=False)
+        with open(excel_path, 'rb') as excel_file:
+            st.download_button(label='Download API Key as Excel', data=excel_file, file_name=excel_path, mime='application/vnd.ms-excel')
 ##############################################################################################################################################################################
 
 
