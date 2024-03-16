@@ -184,130 +184,6 @@
 #             file.write(response_text)
 #         st.download_button(label="Download Response", data=response_text, file_name="invoice_response.txt", mime="text/plain")
 #################################################################################################################################################################################3METIRCSPAGE_ETCCCC
-# from dotenv import load_dotenv
-# import streamlit as st
-# import os
-# from PIL import Image
-# import google.generativeai as genai
-# import datetime
-# import pandas as pd
-
-# # Load .env variables
-# load_dotenv()
-
-# # Configure Google GenAI API
-# genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-
-# # Load Gemini pro vision model
-# model = genai.GenerativeModel('gemini-pro-vision')
-
-# # Define functions
-# def get_gemini_response(input, images, user_prompt):
-#     response = model.generate_content([input, images[0], user_prompt])
-#     return response.text
-
-# def input_image_details(uploaded_files):
-#     image_parts = []
-#     for uploaded_file in uploaded_files:
-#         if uploaded_file is not None:
-#             # Read the file into bytes
-#             bytes_data = uploaded_file.getvalue()
-#             image_parts.append({
-#                 "mime_type": uploaded_file.type,
-#                 "data": bytes_data
-#             })
-#         else:
-#             raise FileNotFoundError("No file uploaded")
-#     return image_parts
-
-# # Initialize session state for real-time data tracking
-# if 'invoices_processed' not in st.session_state:
-#     st.session_state['invoices_processed'] = 0
-# if 'successful_extractions' not in st.session_state:
-#     st.session_state['successful_extractions'] = 0
-# if 'extraction_failures' not in st.session_state:
-#     st.session_state['extraction_failures'] = 0
-
-# # Set Streamlit page config
-# st.set_page_config(page_title="MULTI LANGUAGE INVOICE Extractor")
-
-# # Sidebar for navigation
-# page = st.sidebar.selectbox("Choose your page", ["Home", "Metrics", "History", "Settings"])
-
-# # Home Page
-# if page == "Home":
-#     st.header("MultiLanguage Invoice Extractor")
-#     input_text = st.text_input("Input Prompt:", key="input")
-#     uploaded_files = st.file_uploader("Choose images of the invoice...", accept_multiple_files=True)
-#     if uploaded_files:
-#         for uploaded_file in uploaded_files:
-#             image = Image.open(uploaded_file)
-#             st.image(image, caption="Uploaded Image.", use_column_width=True)
-#     submit = st.button("Tell me about the invoices")
-
-#     input_prompt = """
-#     You are an expert in understanding invoices. We will upload multiple images as invoices
-#     and you will have to answer any questions based on the uploaded invoice images 
-#     and also provide the details in a table format.
-#     """
-
-#     if submit:
-#         image_data = input_image_details(uploaded_files)
-#         response_text = get_gemini_response(input_prompt, image_data, input_text)
-#         st.subheader("The Response is:")
-#         st.write(response_text)
-
-#         # Update session state
-#         st.session_state['invoices_processed'] += len(uploaded_files)
-#         if response_text:
-#             st.session_state['successful_extractions'] += 1
-#         else:
-#             st.session_state['extraction_failures'] += 1
-
-#         # Download button for the response text
-#         if response_text:
-#             with open("invoice_response.txt", "w") as file:
-#                 file.write(response_text)
-#             st.download_button(label="Download Response", data=response_text, file_name="invoice_response.txt", mime="text/plain")
-
-# # Metrics Page
-# elif page == "Metrics":
-#     st.title("Invoice Processing Metrics")
-
-#     accuracy_rate = ((st.session_state['successful_extractions'] / max(1, st.session_state['invoices_processed'])) * 100)
-
-#     metrics = {
-#         "Total Invoices Processed": st.session_state['invoices_processed'],
-#         "Successful Extractions": st.session_state['successful_extractions'],
-#         "Extraction Failures": st.session_state['extraction_failures'],
-#         "Accuracy Rate": f"{accuracy_rate:.2f}%"
-#     }
-
-#     for metric, value in metrics.items():
-#         st.metric(label=metric, value=value)
-
-#     st.text(f"Last updated: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-
-# # History Page
-# elif page == "History":
-#     st.title("Processed Invoices History")
-#     if 'invoice_history' not in st.session_state:
-#         st.session_state['invoice_history'] = pd.DataFrame(columns=['Timestamp', 'Invoice Details'])
-#     st.table(st.session_state['invoice_history'])
-
-# # Settings Page
-# elif page == "Settings":
-#     st.title("API Settings")
-#     api_key = st.text_input("Enter your Google API Key:", type="password")
-#     save_api_key = st.button("Save API Key")
-#     if save_api_key and api_key:
-#         os.environ["GOOGLE_API_KEY"] = api_key
-#         st.success("API Key Updated Successfully")
-
-
-    
-##############################################################################################################################################################################
-
 from dotenv import load_dotenv
 import streamlit as st
 import os
@@ -315,7 +191,6 @@ from PIL import Image
 import google.generativeai as genai
 import datetime
 import pandas as pd
-import openpyxl
 
 # Load .env variables
 load_dotenv()
@@ -359,29 +234,79 @@ st.set_page_config(page_title="MULTI LANGUAGE INVOICE Extractor")
 # Sidebar for navigation
 page = st.sidebar.selectbox("Choose your page", ["Home", "Metrics", "History", "Settings"])
 
-# Settings Page for API Key configuration and exporting to Excel
-if page == "Settings":
+# Home Page
+if page == "Home":
+    st.header("MultiLanguage Invoice Extractor")
+    input_text = st.text_input("Input Prompt:", key="input")
+    uploaded_files = st.file_uploader("Choose images of the invoice...", accept_multiple_files=True)
+    if uploaded_files:
+        for uploaded_file in uploaded_files:
+            image = Image.open(uploaded_file)
+            st.image(image, caption="Uploaded Image.", use_column_width=True)
+    submit = st.button("Tell me about the invoices")
+
+    input_prompt = """
+    You are an expert in understanding invoices. We will upload multiple images as invoices
+    and you will have to answer any questions based on the uploaded invoice images 
+    and also provide the details in a table format.
+    """
+
+    if submit:
+        image_data = input_image_details(uploaded_files)
+        response_text = get_gemini_response(input_prompt, image_data, input_text)
+        st.subheader("The Response is:")
+        st.write(response_text)
+
+        # Update session state
+        st.session_state['invoices_processed'] += len(uploaded_files)
+        if response_text:
+            st.session_state['successful_extractions'] += 1
+        else:
+            st.session_state['extraction_failures'] += 1
+
+        # Download button for the response text
+        if response_text:
+            with open("invoice_response.txt", "w") as file:
+                file.write(response_text)
+            st.download_button(label="Download Response", data=response_text, file_name="invoice_response.txt", mime="text/plain")
+
+# Metrics Page
+elif page == "Metrics":
+    st.title("Invoice Processing Metrics")
+
+    accuracy_rate = ((st.session_state['successful_extractions'] / max(1, st.session_state['invoices_processed'])) * 100)
+
+    metrics = {
+        "Total Invoices Processed": st.session_state['invoices_processed'],
+        "Successful Extractions": st.session_state['successful_extractions'],
+        "Extraction Failures": st.session_state['extraction_failures'],
+        "Accuracy Rate": f"{accuracy_rate:.2f}%"
+    }
+
+    for metric, value in metrics.items():
+        st.metric(label=metric, value=value)
+
+    st.text(f"Last updated: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
+# History Page
+elif page == "History":
+    st.title("Processed Invoices History")
+    if 'invoice_history' not in st.session_state:
+        st.session_state['invoice_history'] = pd.DataFrame(columns=['Timestamp', 'Invoice Details'])
+    st.table(st.session_state['invoice_history'])
+
+# Settings Page
+elif page == "Settings":
     st.title("API Settings")
     api_key = st.text_input("Enter your Google API Key:", type="password")
-    if st.button("Save API Key"):
-        if api_key:
-            # Here we directly write to the .env file, which is generally not recommended for deployment scenarios.
-            # A more secure approach for production is using secure environment variable management services.
-            with open(".env", "a") as env_file:
-                env_file.write(f"GOOGLE_API_KEY={api_key}\n")
-            st.success("API Key saved successfully in .env file")
+    save_api_key = st.button("Save API Key")
+    if save_api_key and api_key:
+        os.environ["GOOGLE_API_KEY"] = api_key
+        st.success("API Key Updated Successfully")
 
-    if st.button('Export API Key to Excel'):
-        if api_key:
-            # Create a DataFrame and save the API key to an Excel file
-            df_api_key = pd.DataFrame({'API Key': [api_key]})
-            excel_path = 'api_key.xlsx'
-            df_api_key.to_excel(excel_path, index=False)
 
-            # Download the Excel file
-            with open(excel_path, 'rb') as excel_file:
-                st.download_button(label='Download API Key as Excel', data=excel_file, file_name='api_key.xlsx', mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        else:
-            st.error("No API Key entered.")
+    
+##############################################################################################################################################################################
+
 
 
