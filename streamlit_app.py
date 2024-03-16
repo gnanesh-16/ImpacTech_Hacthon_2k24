@@ -58,64 +58,64 @@
 ##############################################################################################################################
 
 
-from dotenv import load_dotenv
-# load_dotenv() 
-import streamlit as st
-import os
-from PIL import Image
-import google.generativeai as genai
+# from dotenv import load_dotenv
+# # load_dotenv() 
+# import streamlit as st
+# import os
+# from PIL import Image
+# import google.generativeai as genai
 
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+# genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-## Load Gemini pro vision model
-model = genai.GenerativeModel('gemini-pro-vision')
+# ## Load Gemini pro vision model
+# model = genai.GenerativeModel('gemini-pro-vision')
 
-def get_gemini_response(input, images, user_prompt):
-    response = model.generate_content([input, images[0], user_prompt])
-    return response.text
+# def get_gemini_response(input, images, user_prompt):
+#     response = model.generate_content([input, images[0], user_prompt])
+#     return response.text
 
-def input_image_details(uploaded_files):
-    image_parts = []
-    for uploaded_file in uploaded_files:
-        if uploaded_file is not None:
-            # Read the file into bytes
-            bytes_data = uploaded_file.getvalue()
+# def input_image_details(uploaded_files):
+#     image_parts = []
+#     for uploaded_file in uploaded_files:
+#         if uploaded_file is not None:
+#             # Read the file into bytes
+#             bytes_data = uploaded_file.getvalue()
 
-            image_parts.append({
-                "mime_type": uploaded_file.type,
-                "data": bytes_data
-            })
-        else:
-            raise FileNotFoundError("No file uploaded")
+#             image_parts.append({
+#                 "mime_type": uploaded_file.type,
+#                 "data": bytes_data
+#             })
+#         else:
+#             raise FileNotFoundError("No file uploaded")
     
-    return image_parts
+#     return image_parts
 
-st.set_page_config(page_title="MULTI LANGUAGE INVOICE Extractor")
+# st.set_page_config(page_title="MULTI LANGUAGE INVOICE Extractor")
 
-st.header("MultiLanguage Invoice Extractor")
-input_text = st.text_input("Input Prompt:", key="input")
-uploaded_files = st.file_uploader("Choose images of the invoice...", accept_multiple_files=True)
+# st.header("MultiLanguage Invoice Extractor")
+# input_text = st.text_input("Input Prompt:", key="input")
+# uploaded_files = st.file_uploader("Choose images of the invoice...", accept_multiple_files=True)
 
-if uploaded_files is not None:
-    for uploaded_file in uploaded_files:
-        image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Image.", use_column_width=True)
+# if uploaded_files is not None:
+#     for uploaded_file in uploaded_files:
+#         image = Image.open(uploaded_file)
+#         st.image(image, caption="Uploaded Image.", use_column_width=True)
 
-submit = st.button("Tell me about the invoices")
+# submit = st.button("Tell me about the invoices")
 
-input_prompt = """
-You are an expert in understanding invoices. We will upload multiple images as invoices
-and you will have to answer any questions based on the uploaded invoice images 
-and also provide the details in a table format.
-"""
+# input_prompt = """
+# You are an expert in understanding invoices. We will upload multiple images as invoices
+# and you will have to answer any questions based on the uploaded invoice images 
+# and also provide the details in a table format.
+# """
 
-## if submit button is clicked
+# ## if submit button is clicked
 
-if submit:
-    image_data = input_image_details(uploaded_files)
-    response = get_gemini_response(input_prompt, image_data, input_text)
-    st.subheader("The Response is:")
-    st.write(response)
+# if submit:
+#     image_data = input_image_details(uploaded_files)
+#     response = get_gemini_response(input_prompt, image_data, input_text)
+#     st.subheader("The Response is:")
+#     st.write(response)
 
 
 #############MAIN########MAIN###############MAIN################MAIN#########MAIN############MAIN#################################################################
@@ -185,67 +185,72 @@ if submit:
 #         st.download_button(label="Download Response", data=response_text, file_name="invoice_response.txt", mime="text/plain")
 
 ############################################################################################################################################
-# from dotenv import load_dotenv
-# load_dotenv() 
-# import streamlit as st
-# import os
-# from PIL import Image
-# import google.generativeai as genai
 
-# genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-# ## Load Gemini pro vision model
-# model = genai.GenerativeModel('gemini-pro-vision')
+from dotenv import load_dotenv
+load_dotenv() 
+import streamlit as st
+import os
+from PIL import Image
+import google.generativeai as genai
 
-# def get_gemini_response(input, images, user_prompt):
-#     response = model.generate_content([input, images, user_prompt])
-#     return response.text
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-# def input_image_details(uploaded_files):
-#     image_parts = []
-#     for uploaded_file in uploaded_files:
-#         if uploaded_file is not None:
-#             # Read the file into bytes
-#             bytes_data = uploaded_file.getvalue()
+## Load Gemini pro vision model
+model = genai.GenerativeModel('gemini-pro-vision')
 
-#             image_parts.append({
-#                 "mime_type": uploaded_file.type,
-#                 "data": bytes_data
-#             })
-#         else:
-#             raise FileNotFoundError("No file uploaded")
+def get_gemini_response(input, images, user_prompt):
+    responses = []
+    for image in images:
+        response = model.generate_content([input, image['data'], user_prompt])
+        responses.append(response.text)
+    return responses
+
+def input_image_details(uploaded_files):
+    image_parts = []
+    for uploaded_file in uploaded_files:
+        if uploaded_file is not None:
+            # Read the file into bytes
+            bytes_data = uploaded_file.getvalue()
+
+            image_parts.append({
+                "mime_type": uploaded_file.type,
+                "data": bytes_data
+            })
+        else:
+            raise FileNotFoundError("No file uploaded")
     
-#     return image_parts
+    return image_parts
 
-# st.set_page_config(page_title="MULTI LANGUAGE INVOICE Extractor")
+st.set_page_config(page_title="MULTI LANGUAGE INVOICE Extractor")
 
-# st.header("MultiLanguage Invoice Extractor")
-# input_text = st.text_input("Input Prompt:", key="input")
-# uploaded_files = st.file_uploader("Choose images of the invoice...", accept_multiple_files=True)
+st.header("MultiLanguage Invoice Extractor")
+input_text = st.text_input("Input Prompt:", key="input")
+uploaded_files = st.file_uploader("Choose images of the invoice...", accept_multiple_files=True)
 
-# if uploaded_files is not None:
-#     images = []
-#     for uploaded_file in uploaded_files:
-#         image = Image.open(uploaded_file)
-#         st.image(image, caption="Uploaded Image.", use_column_width=True)
-#         images.append({
-#             "mime_type": uploaded_file.type,
-#             "data": uploaded_file.getvalue()
-#         })
+if uploaded_files is not None:
+    images = []
+    for uploaded_file in uploaded_files:
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Uploaded Image.", use_column_width=True)
+        images.append({
+            "mime_type": uploaded_file.type,
+            "data": uploaded_file.getvalue()
+        })
 
-# submit = st.button("Tell me about the invoices")
+submit = st.button("Tell me about the invoices")
 
-# input_prompt = """
-# You are an expert in understanding invoices. We will upload multiple images as invoices
-# and you will have to answer any questions based on the uploaded invoice images 
-# and also provide the details in a table format.
-# """
+input_prompt = """
+You are an expert in understanding invoices. We will upload multiple images as invoices
+and you will have to answer any questions based on the uploaded invoice images 
+and also provide the details in a table format.
+"""
 
-# ## if submit button is clicked
+## if submit button is clicked
 
-# if submit:
-#     response = get_gemini_response(input_prompt, images, input_text)
-#     st.subheader("The Response is:")
-#     st.write(response)
-
+if submit:
+    responses = get_gemini_response(input_prompt, images, input_text)
+    st.subheader("The Responses are:")
+    for idx, response in enumerate(responses):
+        st.write(f"Response {idx + 1}: {response}")
 
