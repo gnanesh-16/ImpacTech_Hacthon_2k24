@@ -178,8 +178,8 @@ if submit:
     st.subheader("The Response is:")
     st.write(response_text)
 
-    # Add a download link for the response text
+    # Add a download button for the response text
     if response_text:
         with open("invoice_response.txt", "w") as file:
             file.write(response_text)
-        st.markdown("[Download the response text](./invoice_response.txt)")
+        st.markdown("[Download the response text](./invoice_response.txt)", unsafe_allow_html=True)
