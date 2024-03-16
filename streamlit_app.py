@@ -303,5 +303,13 @@ elif page == "Settings":
     if save_api_key and api_key:
         os.environ["GOOGLE_API_KEY"] = api_key
         st.success("API Key Updated Successfully")
+##############################################################################################################################################################################
+# elif page == "History":
+#     st.title("Processed Invoices History")
+#     invoice_history = get_history_from_db()
+#     if not invoice_history.empty:
+#         st.table(invoice_history)
+#     else:
+#         st.write("No history available.")
 
 
