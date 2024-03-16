@@ -304,8 +304,21 @@ elif page == "Settings":
         os.environ["GOOGLE_API_KEY"] = api_key
         st.success("API Key Updated Successfully")
 
+def get_gemini_response(input_text, images, user_prompt):
+    try:
+        # Assuming the API expects a dictionary with 'input', 'images', and 'user_prompt' keys
+        # Note: This is a hypothetical structure; please adjust according to the actual API requirements
+        input_data = {
+            "input": input_text,
+            "images": images,  # Ensure images is a list of dictionaries with the correct structure
+            "user_prompt": user_prompt
+        }
+        response = model.generate_content(input_data)
+        return response.text
+    except Exception as e:
+        print(f"Error during generating content: {e}")
+        return None
 
-    
 ##############################################################################################################################################################################
 
 
